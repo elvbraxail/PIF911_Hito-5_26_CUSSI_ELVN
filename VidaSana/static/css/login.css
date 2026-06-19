@@ -1,0 +1,69 @@
+/* Estilos generales del cuerpo */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif; /* Tipografía general */
+    background: linear-gradient(to bottom, #003366, #0066cc); /* Fondo degradado */
+    height: 100vh; /* Altura completa de la ventana */
+    display: flex; /* Usar flexbox para centrar el contenido */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+
+/* Estilos para el contenedor del login */
+.login-container {
+    width: 100%; /* Ocupa todo el ancho */
+    max-width: 400px; /* Ancho máximo para el formulario */
+    background-color: white; /* Fondo blanco */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+    padding: 20px; /* Espacio interno */
+}
+
+/* Estilos para la caja de login */
+.login-box {
+    display: flex;
+    flex-direction: column; /* Apila los elementos verticalmente */
+    align-items: center; /* Centra horizontalmente los elementos */
+}
+
+/* Estilos para la imagen del logo */
+.login-box img {
+    width: 100px; /* Ancho del logo */
+    margin-bottom: 20px; /* Espacio inferior */
+}
+
+/* Estilos para los encabezados */
+h2 {
+    color: #003366; /* Color del texto del encabezado */
+    margin-bottom: 20px; /* Espacio inferior */
+}
+
+/* Estilos para los iconos de entrada */
+.icon {
+    position: absolute; /* Posición absoluta para el icono */
+    margin: 10px; /* Margen alrededor del icono */
+    color: #003366; /* Color del icono */
+}
+
+/* Estilos para los campos de entrada */
+.form-control {
+    padding-left: 40px; /* Espacio a la izquierda para el icono */
+    border-radius: 5px; /* Bordes redondeados */
+    border: 1px solid #ccc; /* Borde gris claro */
+}
+
+/* Estilo del botón */
+.btn {
+    background-color: #003366; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    width: 100%; /* Ancho completo */
+    padding: 10px; /* Espacio interno */
+    margin-top: 10px; /* Espacio superior */
+}
+
+/* Cambiar color del botón al pasar el ratón */
+.btn:hover {
+    background-color: #0066cc; /* Color más claro al pasar el ratón */
+}

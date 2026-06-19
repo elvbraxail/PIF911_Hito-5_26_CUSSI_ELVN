@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Registro Clínico - Vida Sana</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+<a href="/" class="btn-volver">
+<i class="fa fa-arrow-left"></i> Volver
+</a>
+
+<header class="top">
+<h1>Vida Sana</h1>
+<p>Registro Clínico</p>
+</header>
+
+<div id="toast" class="toast"></div>
+
+<div class="selector">
+<button class="tab active" onclick="mostrarFormulario('paciente', this)">Paciente</button>
+<button class="tab" onclick="mostrarFormulario('psicologo', this)">Psicólogo</button>
+</div>
+
+<!-- ================= PACIENTE ================= -->
+<section id="pacienteBox" class="panel">
+
+<h2>Paciente</h2>
+
+<form id="formPaciente">
+
+<div class="grid">
+
+<input name="nombre" placeholder="Nombre" required>
+<input name="apellido_paterno" placeholder="Apellido paterno" required>
+<input name="apellido_materno" placeholder="Apellido materno" required>
+
+<input name="ci" placeholder="CI" required>
+<input type="number" name="edad" placeholder="Edad" required>
+
+<input name="telefono" placeholder="Teléfono" required>
+<input name="correo" type="email" placeholder="Correo" required>
+
+<select name="sexo" required>
+<option value="">Sexo</option>
+<option>Masculino</option>
+<option>Femenino</option>
+<option>Otro</option>
+</select>
+
+<input name="usuario" placeholder="Usuario" required>
+<input type="password" name="password" placeholder="Contraseña" required>
+
+<textarea name="motivo" placeholder="Motivo de consulta" required></textarea>
+
+</div>
+
+<button class="btn-save">Guardar</button>
+
+</form>
+</section>
+
+
+<!-- ================= PSICOLOGO ================= -->
+<section id="psicologoBox" class="panel hidden">
+
+<h2>Psicólogo</h2>
+
+<form id="formPsicologo">
+
+<div class="grid">
+
+<input name="nombre" placeholder="Nombre" required>
+<input name="apellido_paterno" placeholder="Apellido paterno" required>
+<input name="apellido_materno" placeholder="Apellido materno" required>
+
+<input name="ci" placeholder="CI" required>
+<input name="matricula" placeholder="Matrícula" required>
+
+<input name="especialidad" placeholder="Especialidad" required>
+<input name="telefono" placeholder="Teléfono" required>
+
+<input name="correo" type="email" placeholder="Correo" required>
+
+<input name="usuario" placeholder="Usuario" required>
+<input type="password" name="password" placeholder="Contraseña" required>
+
+</div>
+
+<button class="btn-save">Guardar</button>
+
+</form>
+</section>
+
+
+<script>
+
+function mostrarFormulario(tipo,btn){
+document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"))
+btn.classList.add("active")
+
+pacienteBox.classList.add("hidden")
+psicologoBox.classList.add("hidden")
+
+if(tipo==="paciente") pacienteBox.classList.remove("hidden")
+else psicologoBox.classList.remove("hidden")
+}
+
+function toast(msg){
+let t=document.getElementById("toast")
+t.innerText=msg
+t.classList.add("show")
+setTimeout(()=>t.classList.remove("show"),2500)
+}
+
+function formToJson(f){
+let o={}
+new FormData(f).forEach((v,k)=>o[k]=v)
+return o
+}
+
+/* PACIENTE */
+formPaciente.onsubmit=async e=>{
+e.preventDefault()
+
+let data=formToJson(formPaciente)
+
+try{
+
+let r=await fetch("/registrar_paciente",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+})
+
+let res=await r.json()
+
+if(r.ok){
+toast("✔ El paciente fue registrado exitosamente")
+formPaciente.reset()
+}else{
+toast("❌ " + res.mensaje)
+}
+
+}catch{
+toast("❌ Error al registrar paciente")
+}
+
+}
+
+/* PSICOLOGO */
+formPsicologo.onsubmit=async e=>{
+e.preventDefault()
+
+let data=formToJson(formPsicologo)
+
+try{
+
+let r=await fetch("/registrar_psicologo",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+})
+
+let res=await r.json()
+
+if(r.ok){
+toast("✔ El psicólogo fue registrado exitosamente")
+formPsicologo.reset()
+}else{
+toast("❌ " + res.mensaje)
+}
+
+}catch{
+toast("❌ Error al registrar psicólogo")
+}
+
+}
+
+</script>
+
+</body>
+</html>

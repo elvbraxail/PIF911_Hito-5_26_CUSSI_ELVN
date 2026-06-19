@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Vida Sana</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+
+<div style="position:absolute; top:20px; left:20px;">
+    <a href="/registro" style="text-decoration:none; color:#e64009; font-weight:bold; font-size:14px;">
+        <i class="fas fa-user-plus"></i> Registrarse
+    </a>
+</div>
+
+<div class="login-container">
+    <div class="login-box">
+
+        <!-- Logo -->
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
+
+        <form id="loginForm">
+            <h2>Iniciar Sesión</h2>
+
+            <div class="mb-3">
+                <input type="text" id="usuario" class="form-control" placeholder="Usuario" required>
+            </div>
+            
+            <div class="mb-3">
+                <input type="password" id="password" class="form-control" placeholder="Contraseña" required>
+            </div>
+
+            <!-- 🔴 MENSAJE DE ERROR -->
+            <p id="errorMsg" style="color:red; display:none; font-size:14px;">
+                Usuario o contraseña incorrectos
+            </p>
+            
+            <button type="submit" class="btn">Ingresar</button>
+        </form>
+
+    </div>
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", login);
+
+async function login(event) {
+    event.preventDefault();
+
+    const usuario = document.getElementById("usuario").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const errorMsg = document.getElementById("errorMsg");
+
+    errorMsg.style.display = "none";
+
+    if (!usuario || !password) {
+        errorMsg.innerText = "Completa todos los campos";
+        errorMsg.style.display = "block";
+        return;
+    }
+
+    try {
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                usuario: usuario,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.status === "ok") {
+
+            localStorage.setItem("rol", data.rol);
+            localStorage.setItem("permisos", JSON.stringify(data.permisos || []));
+
+            // 🔥 Redirección
+            if (data.rol === "admin") {
+                window.location.href = "/sistema";
+            } 
+            else if (data.rol === "psicologo") {
+                window.location.href = "/personal";
+            } 
+            else if (data.rol === "paciente") {
+                window.location.href = "/sistema";
+            }
+
+        } else {
+            errorMsg.innerText = "Usuario o contraseña incorrectos";
+            errorMsg.style.display = "block";
+        }
+
+    } catch (error) {
+        console.error(error);
+        errorMsg.innerText = "Error al conectar con el servidor";
+        errorMsg.style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Test Ansiedad Social - Vida Sana</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/sistema.css') }}">
+</head>
+<body>
+
+<div class="progress-wrap">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+
+
+<audio id="vozIntro" autoplay>
+<source src="{{ url_for('static', filename='audio/voz.mp3') }}" type="audio/mpeg">
+</audio>
+
+
+
+<section id="introBox" class="intro-card">
+
+<h1>Evaluación de Ansiedad Social</h1>
+
+<p>
+Somos el Consultorio Psicológico Vida Sana y este es un espacio seguro para explorar tus emociones.
+</p>
+
+<p>
+No existen respuestas correctas o incorrectas. Responde con honestidad.
+</p>
+
+<button onclick="iniciarTest()">
+Comenzar Evaluación
+</button>
+
+</section>
+
+
+
+
+<section class="quiz-card hidden">
+
+<div class="step-badge">
+Pregunta <span id="stepNumber">1</span> de
+<span id="totalQuestions"></span>
+</div>
+
+<h2 id="questionText"></h2>
+
+<p class="instruction">
+Selecciona cuánto miedo o ansiedad te genera esta situación:
+</p>
+
+
+<div class="answers">
+
+<button class="option" data-score="0">
+<span class="letter">A</span>
+Nada de ansiedad
+</button>
+
+<button class="option" data-score="1">
+<span class="letter">B</span>
+Poca ansiedad
+</button>
+
+<button class="option" data-score="2">
+<span class="letter">C</span>
+Bastante ansiedad
+</button>
+
+<button class="option" data-score="3">
+<span class="letter">D</span>
+Mucha ansiedad
+</button>
+
+</div>
+
+<button id="nextBtn" disabled>
+Siguiente
+</button>
+
+</section>
+
+
+
+
+<!-- NUEVA FASE NLP -->
+<section id="emocionBox" class="result hidden">
+
+<h2>Reflexión Emocional</h2>
+
+<p id="preguntaDinamica">
+</p>
+
+<textarea id="textoPaciente"
+placeholder="Escribe con confianza lo que sientes..."
+rows="7"></textarea>
+
+<button onclick="analizarTexto()">
+Analizar y ver resultado
+</button>
+
+</section>
+
+
+
+
+
+<section id="resultadoBox" class="result hidden">
+
+<h2>Resultado del Test</h2>
+
+<div class="score-circle">
+<span id="scoreValue"></span>
+</div>
+
+<h3 id="nivelAnsiedad"></h3>
+
+<p id="recomendacion"></p>
+
+<div id="resultadoIA"></div>
+
+<button onclick="reiniciar()">
+Volver a realizar test
+</button>
+
+</section>
+
+
+
+
+
+<script>
+
+const preguntas=[
+
+"Llamar por teléfono en presencia de otras personas",
+"Participar en grupos pequeños",
+"Comer en lugares públicos",
+"Hablar con personas con autoridad",
+"Dar una exposición ante público",
+"Ir a una fiesta",
+"Trabajar mientras te observan",
+"Conocer personas nuevas",
+"Ser centro de atención",
+"Intervenir en una reunión",
+"Hacer un examen o prueba",
+"Mirar a los ojos a alguien desconocido"
+
+]
+
+let actual=0
+let seleccion=null
+let puntaje=0
+let respuestasUsuario=[]
+let respuestasAltas=[]
+
+const audio=document.getElementById("vozIntro")
+const quiz=document.querySelector(".quiz-card")
+const intro=document.getElementById("introBox")
+
+const q=document.getElementById("questionText")
+const step=document.getElementById("stepNumber")
+const total=document.getElementById("totalQuestions")
+const bar=document.getElementById("progressBar")
+const next=document.getElementById("nextBtn")
+
+const options=document.querySelectorAll(".option")
+
+total.innerText=preguntas.length
+
+
+function iniciarTest(){
+
+audio.pause()
+
+intro.style.display="none"
+
+quiz.classList.remove("hidden")
+
+cargarPregunta()
+
+}
+
+
+
+function cargarPregunta(){
+
+q.classList.remove("show")
+
+setTimeout(()=>{
+q.innerText=preguntas[actual]
+q.classList.add("show")
+},150)
+
+step.innerText=actual+1
+
+bar.style.width=
+((actual)/preguntas.length)*100+"%"
+
+options.forEach(
+b=>b.classList.remove("selected")
+)
+
+seleccion=null
+next.disabled=true
+
+}
+
+
+
+options.forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+options.forEach(
+x=>x.classList.remove("selected")
+)
+
+btn.classList.add("selected")
+
+seleccion=parseInt(
+btn.dataset.score
+)
+
+next.disabled=false
+
+})
+
+})
+
+
+
+next.addEventListener("click",()=>{
+
+puntaje+=seleccion
+
+respuestasUsuario.push({
+pregunta:preguntas[actual],
+respuesta:seleccion
+})
+
+if(seleccion>=2){
+respuestasAltas.push(
+preguntas[actual]
+)
+}
+
+actual++
+
+if(actual<preguntas.length){
+
+cargarPregunta()
+
+}
+else{
+
+mostrarPreguntaDinamica()
+
+}
+
+})
+
+
+
+
+function mostrarPreguntaDinamica(){
+
+quiz.style.display="none"
+
+document
+.getElementById("emocionBox")
+.classList.remove("hidden")
+
+
+let preguntaFinal=""
+
+if(
+respuestasAltas.some(x=>
+x.includes("autoridad") ||
+x.includes("exposición") ||
+x.includes("atención")
+)
+){
+
+preguntaFinal=
+"Notamos que algunas situaciones relacionadas con sentirte observado o evaluado generan incomodidad. ¿Qué pensamientos suelen aparecer en tu mente cuando sientes que otros podrían juzgarte?"
+
+}
+
+else if(
+respuestasAltas.some(x=>
+x.includes("personas nuevas")||
+x.includes("grupos")
+)
+){
+
+preguntaFinal=
+"Vimos señales de ansiedad en interacciones sociales. Cuéntanos una situación reciente donde te sentiste incómodo al relacionarte con otros. ¿Qué sentiste emocionalmente?"
+
+}
+
+else{
+
+preguntaFinal=
+"Según tus respuestas hubo algunas situaciones difíciles. Describe qué emociones has sentido últimamente cuando enfrentas situaciones sociales."
+
+}
+
+preguntaDinamica.innerText=
+preguntaFinal
+
+}
+
+
+
+async function analizarTexto(){
+
+let texto=
+textoPaciente.value.trim()
+
+if(texto==""){
+alert("Escribe tu reflexión emocional.")
+return
+}
+
+
+/* Aquí irá tu modelo IA Flask */
+let emocionDetectada=
+"Analizando emociones..."
+
+
+try{
+
+let r=
+await fetch(
+"/analizar_emociones",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+texto:texto
+})
+}
+)
+
+let data=await r.json()
+
+emocionDetectada=
+`
+<h3>
+Análisis IA:
+${data.emocion}
+</h3>
+
+<p>
+${data.interpretacion}
+</p>
+`
+
+}catch{
+
+emocionDetectada=
+`
+<h3>Análisis IA pendiente</h3>
+<p>Texto recibido correctamente.</p>
+`
+
+}
+
+document
+.getElementById(
+"resultadoIA"
+).innerHTML=
+emocionDetectada
+
+
+mostrarResultado()
+
+}
+
+
+
+function mostrarResultado(){
+
+document
+.getElementById(
+"emocionBox"
+).style.display="none"
+
+
+document
+.getElementById(
+"resultadoBox"
+).classList.remove("hidden")
+
+
+bar.style.width="100%"
+
+scoreValue.innerText=puntaje
+
+let nivel=""
+let recomendacion=""
+
+if(puntaje<=10){
+
+nivel="Nivel Bajo"
+
+recomendacion=
+"Tus respuestas reflejan baja ansiedad social."
+
+}
+
+else if(puntaje<=22){
+
+nivel="Nivel Moderado"
+
+recomendacion=
+"Existe presencia moderada de ansiedad social."
+
+}
+
+else{
+
+nivel="Nivel Elevado"
+
+recomendacion=
+"Se observan indicadores elevados. Considera apoyo profesional."
+
+}
+
+nivelAnsiedad.innerText=nivel
+recomendacion.innerText=recomendacion
+
+guardarTest()
+
+}
+
+
+
+async function guardarTest(){
+
+await fetch(
+"/guardar_test",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+
+puntaje:puntaje,
+nivel:nivelAnsiedad.innerText,
+texto_reflexivo:
+textoPaciente.value,
+
+respuestas:
+respuestasUsuario
+
+})
+}
+)
+
+}
+
+
+
+function reiniciar(){
+location.reload()
+}
+
+</script>
+
+</body>
+</html>

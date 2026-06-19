@@ -1,0 +1,80 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif; /* Tipografía general */
+}
+
+/* Estilos para la barra de navegación */
+.navbar {
+    background: linear-gradient(to right, #003366, #0066cc); /* Fondo degradado */
+    color: white;
+}
+
+.navbar-brand {
+    color: #ffcc00; /* Color dorado */
+    font-size: 2rem; /* Tamaño del texto */
+    font-weight: bold;
+}
+
+.nav-link {
+    color: white; /* Color del texto de los enlaces */
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: #ffcc00; /* Color dorado al pasar el ratón */
+}
+
+/* Estilos para la imagen hero */
+.hero-image {
+    position: relative;
+    width: 100%;
+    height: 62vh; /* Altura del contenedor */
+    overflow: hidden; /* Evitar desbordes */
+}
+
+.hero-image img {
+    width: 100%; /* Ocupa todo el ancho */
+    height: 100%; /* Ocupa toda la altura */
+    object-fit: cover; /* Mantiene proporciones de la imagen */
+}
+
+/* Ajuste para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .hero-image {
+        height: 50vh; /* Reduce la altura en dispositivos móviles */
+    }
+}
+
+/* Estilos para la clase contenido */
+.contenido {
+    background: linear-gradient(to bottom, #003366, #0066cc); /* Fondo azul degradado */
+    color: #ffcc00; /* Texto en dorado */
+    padding: 2rem; /* Espacio interno */
+    border-radius: 10px; /* Bordes redondeados */
+    margin: 0; /* Elimina márgenes para que ocupe todo el ancho */
+    width: 100%; /* El cuadro ocupa todo el ancho de la pantalla */
+    text-align: justify; /* Justifica el texto */
+    height: auto; /* Ajusta la altura automáticamente según el contenido */
+    box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
+}
+
+.contenido p {
+    font-size: 1.2rem; /* Tamaño de fuente */
+    line-height: 1.6; /* Espaciado entre líneas */
+}
+
+/* Estilo para el contenedor dentro de .contenido */
+.contenido .container {
+    background-color: white; /* Fondo blanco */
+    padding: 20px; /* Espacio interno */
+    border-radius: 10px; /* Bordes redondeados */
+    color: #003366; /* Color del texto dentro del contenedor */
+    max-width: 100%; /* Elimina la restricción de ancho máximo */
+    box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
+}
+
+/* Estilo para el texto dentro del contenedor */
+.contenido .container p {
+    color: #003366; /* Texto en azul oscuro */
+    font-weight: normal; /* Peso normal para el texto */
+}

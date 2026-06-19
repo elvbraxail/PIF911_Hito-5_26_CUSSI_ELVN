@@ -1,0 +1,353 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Roboto',sans-serif;
+}
+
+body{
+background:#eef3fa;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+
+
+/* NAVBAR */
+
+.navbar{
+background:linear-gradient(135deg,#1c3f85,#2f63c7);
+padding:15px 20px;
+}
+
+.logo h1{
+text-align:center;
+color:#fff;
+font-size:28px;
+margin-bottom:10px;
+}
+
+.menu{
+display:flex;
+justify-content:center;
+gap:22px;
+list-style:none;
+flex-wrap:wrap;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+font-size:16px;
+}
+
+.menu a:hover{
+color:#ffd54f;
+}
+
+
+
+
+/* CONTENEDOR */
+
+.container{
+flex:1;
+display:flex;
+justify-content:center;
+padding:35px 15px;
+}
+
+.list-section{
+background:white;
+width:100%;
+max-width:1100px;
+padding:30px;
+border-radius:16px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+
+
+.title-box{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.title-box h2{
+font-size:30px;
+color:#234d96;
+}
+
+.add-btn{
+background:#2458b9;
+color:white;
+border:none;
+padding:11px 18px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+}
+
+.add-btn:hover{
+transform:scale(1.03);
+}
+
+
+
+
+/* TOOLS */
+
+.tools{
+display:flex;
+gap:12px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.tools input,
+.tools select{
+flex:1;
+padding:14px;
+border:1px solid #ccc;
+border-radius:10px;
+font-size:14px;
+}
+
+
+
+
+/* TABLA */
+
+.table-box{
+overflow:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:900px;
+}
+
+thead th{
+background:#2458b9;
+color:white;
+padding:15px;
+font-size:15px;
+}
+
+tbody td{
+padding:15px;
+border-bottom:1px solid #ddd;
+font-size:14px;
+}
+
+tbody tr:nth-child(even){
+background:#f7fbff;
+}
+
+tbody tr:hover{
+background:#edf4ff;
+}
+
+
+
+
+/* BOTONES */
+
+.acciones{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+}
+
+.acciones button{
+border:none;
+padding:8px 12px;
+border-radius:8px;
+cursor:pointer;
+color:white;
+font-size:13px;
+}
+
+.view-btn{
+background:#17a2b8;
+}
+
+.edit-btn{
+background:#f0ad00;
+}
+
+.delete-btn{
+background:#dc3545;
+}
+
+.restore-btn{
+background:#28a745;
+}
+
+.acciones button:hover{
+transform:scale(1.05);
+}
+
+
+
+
+/* PAGINACION */
+
+.pagination{
+margin-top:25px;
+display:flex;
+justify-content:center;
+gap:20px;
+}
+
+.pagination button{
+background:#2458b9;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+
+
+
+/* MODALS */
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+.modal-content,
+.modal-view{
+background:white;
+width:450px;
+max-width:92%;
+padding:30px;
+border-radius:18px;
+position:relative;
+}
+
+.close{
+position:absolute;
+top:12px;
+right:18px;
+font-size:30px;
+cursor:pointer;
+}
+
+.modal-content h3,
+.modal-view h3{
+margin-bottom:20px;
+color:#234d96;
+}
+
+.modal-content form{
+display:flex;
+flex-direction:column;
+gap:14px;
+}
+
+.modal-content input{
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+.modal-content button{
+background:#2458b9;
+color:white;
+border:none;
+padding:12px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.detalle-box{
+background:#f7fbff;
+padding:20px;
+border-radius:12px;
+}
+
+.detalle-box p{
+margin-bottom:12px;
+font-size:15px;
+}
+
+
+
+
+/* HISTORIAL */
+
+.historial-box{
+background:white;
+max-width:1100px;
+margin:25px auto;
+padding:25px;
+border-radius:15px;
+box-shadow:0 6px 16px rgba(0,0,0,.08);
+}
+
+.historial-box h3{
+color:#234d96;
+margin-bottom:15px;
+}
+
+.hist-item{
+padding:10px;
+border-bottom:1px solid #ddd;
+font-size:14px;
+}
+
+
+
+
+/* FOOTER */
+
+footer{
+background:linear-gradient(135deg,#1c3f85,#2f63c7);
+color:white;
+text-align:center;
+padding:18px;
+font-size:15px;
+margin-top:auto;
+}
+
+
+
+
+@media(max-width:900px){
+
+.logo h1{
+font-size:23px;
+}
+
+.menu a{
+font-size:14px;
+}
+
+.title-box h2{
+font-size:24px;
+}
+
+.tools{
+flex-direction:column;
+}
+
+table{
+min-width:750px;
+}
+
+}

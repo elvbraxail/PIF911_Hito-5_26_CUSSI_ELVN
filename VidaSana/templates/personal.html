@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CRUD Personal - Vida Sana</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/personal.css') }}">
+
+</head>
+<body>
+
+<nav class="navbar">
+
+<div class="logo">
+<h1>Centro Psicológico Vida Sana</h1>
+</div>
+
+<ul class="menu">
+<li><a href="/registro">Inicio</a></li>
+<li><a href="/sistema">Sistema</a></li>
+<li><a href="/personal">Personal</a></li>
+<li><a href="/pacientes">Pacientes</a></li>
+<li><a href="/ubicacion">Ubicación</a></li>
+</ul>
+
+</nav>
+
+
+
+
+<div class="container">
+
+<section class="list-section">
+
+<div class="title-box">
+
+<h2>Gestión de Personal</h2>
+
+<button
+class="add-btn"
+onclick="abrirModal()">
++ Nuevo Personal
+</button>
+
+</div>
+
+
+
+<div class="tools">
+
+<input
+type="text"
+id="buscar"
+placeholder="Buscar por nombre, CI o especialidad..."
+onkeyup="buscarPersonal()">
+
+<select
+id="filtroEstado"
+onchange="filtrarEstado()">
+
+<option value="activos">
+Activos
+</option>
+
+<option value="eliminados">
+Eliminados
+</option>
+
+<option value="todos">
+Todos
+</option>
+
+</select>
+
+</div>
+
+
+
+
+<div class="table-box">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Nombre</th>
+<th>CI</th>
+<th>Especialidad</th>
+<th>Teléfono</th>
+<th>Correo</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+
+<tbody id="tablaPersonal">
+</tbody>
+
+</table>
+
+</div>
+
+
+
+
+<div class="pagination">
+
+<button onclick="anteriorPagina()">
+Anterior
+</button>
+
+<span id="paginaActual">
+1
+</span>
+
+<button onclick="siguientePagina()">
+Siguiente
+</button>
+
+</div>
+
+
+</section>
+
+</div>
+
+
+
+
+
+<!-- MODAL FORM -->
+
+<div id="modalForm" class="modal">
+
+<div class="modal-content">
+
+<span
+class="close"
+onclick="cerrarModal()">
+×
+</span>
+
+<h3 id="tituloModal">
+Registrar Personal
+</h3>
+
+
+<form id="formPersonal">
+
+<input
+type="hidden"
+id="editId">
+
+
+<input
+type="text"
+id="nombre"
+placeholder="Nombre"
+required>
+
+
+<input
+type="text"
+id="ci"
+placeholder="CI"
+required>
+
+
+<input
+type="text"
+id="matricula"
+placeholder="Matrícula"
+required>
+
+
+<input
+type="text"
+id="especialidad"
+placeholder="Especialidad"
+required>
+
+
+<input
+type="text"
+id="telefono"
+placeholder="Teléfono"
+required>
+
+
+<input
+type="email"
+id="correo"
+placeholder="Correo"
+required>
+
+
+<button type="submit">
+Guardar
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+
+
+
+
+
+<!-- MODAL VER -->
+
+<div id="modalVer" class="modal">
+
+<div class="modal-view">
+
+<span
+class="close"
+onclick="cerrarVer()">
+×
+</span>
+
+<h3>
+Información del Personal
+</h3>
+
+<div class="detalle-box">
+
+<p>
+<b>Nombre:</b>
+<span id="vnombre"></span>
+</p>
+
+<p>
+<b>CI:</b>
+<span id="vci"></span>
+</p>
+
+<p>
+<b>Matrícula:</b>
+<span id="vmatricula"></span>
+</p>
+
+<p>
+<b>Especialidad:</b>
+<span id="vespecialidad"></span>
+</p>
+
+<p>
+<b>Teléfono:</b>
+<span id="vtelefono"></span>
+</p>
+
+<p>
+<b>Correo:</b>
+<span id="vcorreo"></span>
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="historial-box">
+
+<h3>
+Historial de Cambios
+</h3>
+
+<div id="historial">
+Sin cambios aún
+</div>
+
+</div>
+
+
+
+
+<footer>
+Centro Psicológico Vida Sana © 2024
+</footer>
+
+
+
+
+
+
+<script>
+
+let personal=[]
+let filtrados=[]
+
+let pagina=1
+let porPagina=5
+
+
+
+async function cargarPersonal(){
+
+let res=
+await fetch(
+"/api/personal"
+)
+
+personal=
+await res.json()
+
+
+personal=
+personal.map(
+p=>({
+...p,
+activo:
+p.activo!==false
+})
+)
+
+
+filtrados=[
+...personal
+]
+
+renderTabla()
+
+}
+
+
+
+
+
+function renderTabla(){
+
+let inicio=
+(pagina-1)*porPagina
+
+let fin=
+inicio+porPagina
+
+
+let datos=
+filtrados.slice(
+inicio,
+fin
+)
+
+
+let html=""
+
+
+datos.forEach(
+(p,i)=>{
+
+html+=`
+
+<tr>
+
+<td>
+${inicio+i+1}
+</td>
+
+<td>
+${p.nombre||""}
+</td>
+
+<td>
+${p.ci||""}
+</td>
+
+<td>
+${p.especialidad||""}
+</td>
+
+<td>
+${p.telefono||""}
+</td>
+
+<td>
+${p.correo||""}
+</td>
+
+<td>
+${p.activo?"Activo":"Eliminado"}
+</td>
+
+
+<td class="acciones">
+
+<button
+class="view-btn"
+onclick='verRegistro(${JSON.stringify(p)})'>
+Ver
+</button>
+
+
+<button
+class="edit-btn"
+onclick='editarRegistro(${JSON.stringify(p)})'>
+Editar
+</button>
+
+
+${
+p.activo
+?
+
+`<button
+class="delete-btn"
+onclick="eliminarRegistro('${p._id}')">
+Eliminar
+</button>`
+
+:
+
+`<button
+class="restore-btn"
+onclick="restaurarRegistro('${p._id}')">
+Restaurar
+</button>`
+
+}
+
+</td>
+
+</tr>
+
+`
+
+})
+
+document.getElementById(
+"tablaPersonal"
+).innerHTML=html
+
+document.getElementById(
+"paginaActual"
+).innerText=pagina
+
+}
+
+
+
+
+
+function buscarPersonal(){
+
+let t=
+buscar.value.toLowerCase()
+
+filtrados=
+personal.filter(
+p=>
+
+(p.nombre||"")
+.toLowerCase()
+.includes(t)
+
+||
+
+(p.ci||"")
+.toLowerCase()
+.includes(t)
+
+||
+
+(p.especialidad||"")
+.toLowerCase()
+.includes(t)
+
+)
+
+pagina=1
+
+renderTabla()
+
+}
+
+
+
+
+function filtrarEstado(){
+
+let estado=
+filtroEstado.value
+
+
+if(
+estado=="activos"
+){
+filtrados=
+personal.filter(
+x=>x.activo
+)
+}
+
+
+if(
+estado=="eliminados"
+){
+filtrados=
+personal.filter(
+x=>!x.activo
+)
+}
+
+
+if(
+estado=="todos"
+){
+filtrados=[
+...personal
+]
+}
+
+pagina=1
+
+renderTabla()
+
+}
+
+
+
+
+
+function siguientePagina(){
+
+if(
+pagina*porPagina
+<
+filtrados.length
+){
+pagina++
+renderTabla()
+}
+
+}
+
+
+function anteriorPagina(){
+
+if(pagina>1){
+pagina--
+renderTabla()
+}
+
+}
+
+
+
+
+function abrirModal(){
+
+modalForm.style.display=
+"flex"
+
+formPersonal.reset()
+
+editId.value=""
+
+tituloModal.innerText=
+"Registrar Personal"
+
+}
+
+
+
+function cerrarModal(){
+modalForm.style.display=
+"none"
+}
+
+
+
+function cerrarVer(){
+modalVer.style.display=
+"none"
+}
+
+
+
+
+
+formPersonal.addEventListener(
+"submit",
+
+async function(e){
+
+e.preventDefault()
+
+
+if(
+telefono.value.length<8
+){
+alert(
+"Teléfono inválido"
+)
+return
+}
+
+
+let data={
+
+nombre:
+nombre.value,
+
+ci:
+ci.value,
+
+matricula:
+matricula.value,
+
+especialidad:
+especialidad.value,
+
+telefono:
+telefono.value,
+
+correo:
+correo.value
+
+}
+
+
+let id=
+editId.value
+
+
+
+if(id){
+
+await fetch(
+"/api/personal/"+id,
+{
+method:"PUT",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify(data)
+
+}
+)
+
+agregarHistorial(
+"Registro actualizado"
+)
+
+
+}else{
+
+await fetch(
+"/api/personal",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify(data)
+
+}
+)
+
+agregarHistorial(
+"Nuevo registro creado"
+)
+
+}
+
+
+cerrarModal()
+
+cargarPersonal()
+
+}
+
+)
+
+
+
+
+
+function editarRegistro(p){
+
+abrirModal()
+
+tituloModal.innerText=
+"Editar Personal"
+
+
+editId.value=
+p._id
+
+nombre.value=
+p.nombre||""
+
+ci.value=
+p.ci||""
+
+matricula.value=
+p.matricula||""
+
+especialidad.value=
+p.especialidad||""
+
+telefono.value=
+p.telefono||""
+
+correo.value=
+p.correo||""
+
+}
+
+
+
+
+function verRegistro(p){
+
+vnombre.innerText=
+p.nombre||""
+
+vci.innerText=
+p.ci||""
+
+vmatricula.innerText=
+p.matricula||""
+
+vespecialidad.innerText=
+p.especialidad||""
+
+vtelefono.innerText=
+p.telefono||""
+
+vcorreo.innerText=
+p.correo||""
+
+
+modalVer.style.display=
+"flex"
+
+}
+
+
+
+
+
+async function eliminarRegistro(id){
+
+if(
+confirm(
+"¿Desactivar este registro?"
+)
+){
+
+await fetch(
+"/api/personal/"+id,
+{
+method:"DELETE"
+}
+)
+
+agregarHistorial(
+"Registro eliminado"
+)
+
+cargarPersonal()
+
+}
+
+}
+
+
+
+
+
+async function restaurarRegistro(id){
+
+await fetch(
+"/api/personal/restaurar/"+id,
+{
+method:"PUT"
+}
+)
+
+agregarHistorial(
+"Registro restaurado"
+)
+
+cargarPersonal()
+
+}
+
+
+
+
+
+function agregarHistorial(txt){
+
+let fecha=
+new Date()
+.toLocaleString()
+
+
+historial.innerHTML=
+
+`
+<div class="hist-item">
+${fecha}
+ - ${txt}
+</div>
+`
+
++
+
+historial.innerHTML
+
+}
+
+
+
+cargarPersonal()
+
+</script>
+
+</body>
+</html>

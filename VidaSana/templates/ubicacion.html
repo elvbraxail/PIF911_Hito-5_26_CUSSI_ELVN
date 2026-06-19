@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ubicación - Centro Psicológico Vida Sana</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/ubicacion.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+
+<div class="logo">
+<h1>Centro Psicológico Vida Sana</h1>
+</div>
+
+<ul class="menu">
+<li><a href="/registro">Inicio</a></li>
+<li><a href="/sistema">Sistema</a></li>
+<li><a href="/personal">Personal</a></li>
+<li><a href="/pacientes">Pacientes</a></li>
+<li><a href="/ubicacion" class="activo">Ubicación</a></li>
+</ul>
+
+</nav>
+
+
+
+<section class="hero">
+
+<div class="hero-content">
+<h2>Encuéntranos y Agenda tu Visita</h2>
+
+<p>
+Estamos comprometidos con brindar atención psicológica en un espacio seguro,
+cálido y profesional.
+</p>
+
+<a
+href="https://maps.google.com"
+target="_blank"
+class="hero-btn">
+Ver en Google Maps
+</a>
+
+</div>
+
+</section>
+
+
+
+<section class="info-grid">
+
+<div class="info-card">
+<div class="icon">📍</div>
+<h3>Dirección</h3>
+<p>
+Av. 6 de Marzo<br>
+El Alto, La Paz - Bolivia
+</p>
+</div>
+
+
+<div class="info-card">
+<div class="icon">🕒</div>
+<h3>Horarios</h3>
+<p>
+Lun - Vie: 8:00 a 19:00<br>
+Sábado: 8:00 a 13:00
+</p>
+</div>
+
+
+<div class="info-card">
+<div class="icon">📞</div>
+<h3>Contacto</h3>
+<p>
++591 71234567<br>
+vidasana@gmail.com
+</p>
+</div>
+
+</section>
+
+
+
+
+<section class="map-section">
+
+<div class="map-box">
+
+<h2>Nuestra Ubicación</h2>
+
+<div class="map-frame">
+
+<iframe
+src="https://www.google.com/maps?q=El%20Alto%20La%20Paz&output=embed"
+allowfullscreen
+loading="lazy">
+</iframe>
+
+</div>
+
+<div class="actions">
+
+<button onclick="compartirUbicacion()">
+Compartir Ubicación
+</button>
+
+<button onclick="copiarDireccion()">
+Copiar Dirección
+</button>
+
+</div>
+
+<div id="mensaje" class="mensaje">
+Ubicación copiada correctamente
+</div>
+
+</div>
+
+</section>
+
+
+
+
+<section class="services">
+
+<h2>Servicios Disponibles</h2>
+
+<div class="services-grid">
+
+<div class="service-card">
+<h3>Terapia Individual</h3>
+<p>
+Atención personalizada con profesionales especializados.
+</p>
+</div>
+
+<div class="service-card">
+<h3>Psicología Clínica</h3>
+<p>
+Evaluaciones, seguimiento y tratamiento emocional.
+</p>
+</div>
+
+<div class="service-card">
+<h3>Orientación Familiar</h3>
+<p>
+Apoyo integral para familias y relaciones.
+</p>
+</div>
+
+</div>
+
+</section>
+
+
+
+<footer>
+Centro Psicológico Vida Sana - El Alto La Paz Bolivia © 2024
+</footer>
+
+
+
+<script>
+
+function compartirUbicacion(){
+
+if(navigator.share){
+
+navigator.share({
+title:"Centro Psicológico Vida Sana",
+text:"Te comparto la ubicación del centro",
+url:"https://maps.google.com"
+})
+
+}else{
+copiarDireccion()
+}
+
+}
+
+
+function copiarDireccion(){
+
+navigator.clipboard.writeText(
+"Centro Psicológico Vida Sana - Av. 6 de Marzo, El Alto La Paz Bolivia"
+)
+
+let mensaje=document.getElementById("mensaje")
+
+mensaje.style.opacity="1"
+mensaje.style.transform="translateY(0)"
+
+setTimeout(()=>{
+mensaje.style.opacity="0"
+mensaje.style.transform="translateY(20px)"
+},2500)
+
+}
+
+</script>
+
+</body>
+</html>

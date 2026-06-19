@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Expediente Clínico - Vida Sana</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pacientes.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+<div id="toast" class="toast">
+✔ Cambios sincronizados en base de datos
+</div>
+
+<nav class="navbar">
+<div class="logo">
+<h1>Centro Psicológico Vida Sana</h1>
+</div>
+
+<ul class="menu">
+<li><a href="/registro">Inicio</a></li>
+<li><a href="/sistema">Sistema</a></li>
+<li><a href="/personal">Personal</a></li>
+<li><a href="/pacientes">Pacientes</a></li>
+<li><a href="/ubicacion">Ubicación</a></li>
+</ul>
+</nav>
+
+
+<section class="dashboard">
+
+<div class="dashboard-top">
+<h2>Dashboard Clínico</h2>
+
+<button class="sync-btn" onclick="cargarPacientes()">
+↻ Actualizar
+</button>
+
+<div class="sync-status">
+🟢 Sincronizado:
+<span id="ultimaSync">--</span>
+</div>
+
+</div>
+
+
+<div class="cards">
+
+<div class="card">
+<h3 id="totalPacientes">0</h3>
+<p>Pacientes</p>
+</div>
+
+<div class="card">
+<h3 id="totalSesiones">0</h3>
+<p>Sesiones</p>
+</div>
+
+<div class="card warning">
+<h3 id="riesgoAlto">0</h3>
+<p>Riesgo Alto</p>
+</div>
+
+<div class="card success">
+<h3 id="citasHoy">0</h3>
+<p>Citas</p>
+</div>
+
+</div>
+
+
+<div class="charts-grid">
+
+<div class="chart-box">
+<h3>Indicadores Psicológicos</h3>
+<canvas id="graficoTest"></canvas>
+</div>
+
+<div class="chart-box">
+<h3>Nivel de Riesgo</h3>
+<canvas id="graficoRiesgo"></canvas>
+</div>
+
+</div>
+
+</section>
+
+
+
+<div class="container">
+
+<section class="list-section">
+
+<div class="title-box">
+<h2>Expedientes Clínicos</h2>
+
+<button class="add-btn"
+onclick="abrirModal()">
++ Nuevo Paciente
+</button>
+
+</div>
+
+
+<div class="tools">
+<input
+id="buscar"
+placeholder="Buscar paciente"
+onkeyup="buscarPacientes()">
+</div>
+
+
+
+<div class="table-box">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Paciente</th>
+<th>Diagnóstico</th>
+<th>Cita</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+
+<tbody id="tablaPacientes"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</div>
+
+
+
+<div id="modalForm" class="modal">
+
+<div class="modal-content">
+
+<span class="close"
+onclick="cerrarModal()">
+×
+</span>
+
+<h3>Ficha Clínica</h3>
+
+<form id="formPaciente">
+
+<input type="hidden" id="editId">
+
+<div class="grid2">
+<input id="nombre" placeholder="Nombre" required>
+<input id="ci" placeholder="CI">
+<input id="telefono" placeholder="Teléfono">
+<input id="correo" placeholder="Correo">
+<input id="edad" type="number" placeholder="Edad">
+<input id="sexo" placeholder="Sexo">
+</div>
+
+<textarea id="antecedentes"
+placeholder="Antecedentes familiares"></textarea>
+
+<textarea id="historial"
+placeholder="Historial médico"></textarea>
+
+<textarea id="motivo"
+placeholder="Motivo consulta"></textarea>
+
+<textarea id="diagnostico"
+placeholder="Diagnóstico"></textarea>
+
+<textarea id="observaciones"
+placeholder="Observaciones"></textarea>
+
+
+
+<h4>Tests Psicológicos (0-100)</h4>
+
+<div class="grid3">
+<input id="ansiedad" type="number" min="0" max="100">
+<input id="depresion" type="number" min="0" max="100">
+<input id="estres" type="number" min="0" max="100">
+</div>
+
+
+
+<h4>Agendar Cita</h4>
+
+<div class="grid3">
+<input id="fecha_cita" type="date">
+
+<select id="mesCita">
+<option>Enero</option>
+<option>Febrero</option>
+<option>Marzo</option>
+<option>Abril</option>
+<option>Mayo</option>
+<option>Junio</option>
+<option>Julio</option>
+<option>Agosto</option>
+<option>Septiembre</option>
+<option>Octubre</option>
+<option>Noviembre</option>
+<option>Diciembre</option>
+</select>
+
+<input id="anioCita"
+placeholder="Año">
+</div>
+
+
+<label>Psicólogo Asignado</label>
+
+<select id="psicologo">
+<option value="">
+Seleccione Psicólogo
+</option>
+</select>
+
+<textarea id="nota_sesion"
+placeholder="Nota sesión"></textarea>
+
+<button type="submit">
+Guardar Cambios
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+
+
+<div id="modalVer" class="modal">
+
+<div class="modal-view">
+
+<span class="close"
+onclick="cerrarVer()">
+×
+</span>
+
+<h3>Expediente Clínico</h3>
+
+<div id="detallePaciente"></div>
+
+</div>
+
+</div>
+
+
+
+<footer>
+Sistema Clínico Psicológico Vida Sana © 2024
+</footer>
+
+
+
+<script>
+
+let pacientes=[]
+let chart1=null
+let chart2=null
+
+
+function toast(){
+let t=document.getElementById("toast")
+t.classList.add("show")
+
+setTimeout(()=>{
+t.classList.remove("show")
+},2500)
+}
+
+
+
+async function cargarPsicologos(){
+
+let r=await fetch("/api/personal")
+let data=await r.json()
+
+let s=document.getElementById("psicologo")
+
+s.innerHTML=
+'<option value="">Seleccione Psicólogo</option>'
+
+data.forEach(p=>{
+s.innerHTML+=`
+<option value="${p.nombre}">
+${p.nombre}
+</option>`
+})
+
+}
+
+
+
+async function cargarPacientes(){
+
+let r=await fetch("/api/pacientes")
+
+pacientes=await r.json()
+
+renderTabla()
+
+dashboard()
+
+ultimaSync.innerText=
+new Date()
+.toLocaleTimeString()
+
+}
+
+
+
+function riesgo(p){
+
+let total=
+(+p.ansiedad||0)+
+(+p.depresion||0)+
+(+p.estres||0)
+
+if(total>=180)
+return["Alto","rojo"]
+
+if(total>=100)
+return["Moderado","amarillo"]
+
+return["Bajo","verde"]
+
+}
+
+
+
+function renderTabla(){
+
+let html=''
+
+pacientes.forEach((p,i)=>{
+
+let r=riesgo(p)
+
+html+=`
+<tr>
+
+<td>${i+1}</td>
+
+<td>${p.nombre||''}</td>
+
+<td>${p.diagnostico||''}</td>
+
+<td>${p.fecha_cita||'-'}</td>
+
+<td>
+<span class="badge ${r[1]}">
+${r[0]}
+</span>
+</td>
+
+<td class="acciones">
+
+<button class="view-btn"
+onclick='verRegistro(${JSON.stringify(p)})'>
+Ver
+</button>
+
+<button class="edit-btn"
+onclick='editarRegistro(${JSON.stringify(p)})'>
+Editar
+</button>
+
+<button class="delete-btn"
+onclick="eliminarRegistro('${p._id}')">
+Eliminar
+</button>
+
+</td>
+
+</tr>`
+})
+
+tablaPacientes.innerHTML=html
+
+}
+
+
+
+function dashboard(){
+
+totalPacientes.innerText=
+pacientes.length
+
+totalSesiones.innerText=
+pacientes.filter(
+x=>x.nota_sesion
+).length
+
+
+riesgoAlto.innerText=
+pacientes.filter(
+x=>riesgo(x)[0]=="Alto"
+).length
+
+
+citasHoy.innerText=
+pacientes.filter(
+x=>x.fecha_cita
+).length
+
+
+
+if(chart1) chart1.destroy()
+if(chart2) chart2.destroy()
+
+
+chart1=
+new Chart(graficoTest,{
+
+type:"bar",
+
+data:{
+labels:pacientes.map(
+x=>x.nombre
+),
+
+datasets:[
+{
+label:"Ansiedad",
+data:pacientes.map(
+x=>+x.ansiedad||0
+)
+},
+{
+label:"Depresión",
+data:pacientes.map(
+x=>+x.depresion||0
+)
+},
+{
+label:"Estrés",
+data:pacientes.map(
+x=>+x.estres||0
+)
+}
+]
+}
+
+})
+
+
+
+chart2=
+new Chart(graficoRiesgo,{
+
+type:"doughnut",
+
+data:{
+labels:[
+"Bajo",
+"Moderado",
+"Alto"
+],
+
+datasets:[{
+data:[
+pacientes.filter(
+x=>riesgo(x)[0]=="Bajo"
+).length,
+
+pacientes.filter(
+x=>riesgo(x)[0]=="Moderado"
+).length,
+
+pacientes.filter(
+x=>riesgo(x)[0]=="Alto"
+).length
+]
+}]
+}
+
+})
+
+}
+
+
+
+function abrirModal(){
+
+modalForm.style.display="flex"
+
+formPaciente.reset()
+
+editId.value=""
+
+cargarPsicologos()
+
+}
+
+
+function cerrarModal(){
+modalForm.style.display="none"
+}
+
+
+function cerrarVer(){
+modalVer.style.display="none"
+}
+
+
+
+
+formPaciente.addEventListener(
+"submit",
+async function(e){
+
+e.preventDefault()
+
+let id=editId.value
+
+let data={
+
+nombre:nombre.value,
+ci:ci.value,
+telefono:telefono.value,
+correo:correo.value,
+edad:edad.value,
+sexo:sexo.value,
+
+antecedentes:antecedentes.value,
+historial:historial.value,
+motivo:motivo.value,
+diagnostico:diagnostico.value,
+observaciones:observaciones.value,
+
+ansiedad:ansiedad.value||0,
+depresion:depresion.value||0,
+estres:estres.value||0,
+
+fecha_cita:fecha_cita.value,
+psicologo:psicologo.value,
+nota_sesion:nota_sesion.value
+
+}
+
+
+
+if(id){
+
+await fetch(
+"/api/pacientes/"+id,{
+method:"PUT",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(data)
+})
+
+}else{
+
+await fetch(
+"/api/pacientes",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(data)
+})
+
+}
+
+
+cerrarModal()
+
+await cargarPacientes()
+
+toast()
+
+}
+)
+
+
+
+function editarRegistro(p){
+
+abrirModal()
+
+for(let c in p){
+
+if(document.getElementById(c))
+document.getElementById(c).value=p[c]
+
+}
+
+editId.value=p._id
+
+}
+
+
+
+async function eliminarRegistro(id){
+
+if(confirm("Eliminar paciente?")){
+
+await fetch(
+"/api/pacientes/"+id,
+{
+method:"DELETE"
+}
+)
+
+await cargarPacientes()
+
+toast()
+
+}
+
+}
+
+
+
+function verRegistro(p){
+
+detallePaciente.innerHTML=`
+<p><b>Paciente:</b> ${p.nombre}</p>
+<p><b>Diagnóstico:</b> ${p.diagnostico}</p>
+<p><b>Ansiedad:</b> ${p.ansiedad}</p>
+<p><b>Depresión:</b> ${p.depresion}</p>
+<p><b>Estrés:</b> ${p.estres}</p>
+<p><b>Cita:</b> ${p.fecha_cita||'-'}</p>
+<p><b>Psicólogo:</b> ${p.psicologo||'-'}</p>
+`
+
+modalVer.style.display="flex"
+
+}
+
+
+
+function buscarPacientes(){
+
+let t=
+buscar.value.toLowerCase()
+
+let filtrados=
+pacientes.filter(p=>
+
+(p.nombre||'')
+.toLowerCase()
+.includes(t)
+
+||
+
+(p.diagnostico||'')
+.toLowerCase()
+.includes(t)
+
+)
+
+let tmp=pacientes
+pacientes=filtrados
+renderTabla()
+pacientes=tmp
+
+}
+
+
+
+cargarPacientes()
+
+</script>
+
+</body>
+</html>
